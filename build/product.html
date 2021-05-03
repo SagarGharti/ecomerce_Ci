@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="productlist">
+        <div class="col-md-6">
+           <p id="store">Product list</p>
+        </div>
+     
+    </div>
+    <div class="admin">
+        <p id="admin">Admin</p>
+    </div>  
+    <div class="container-fluid">
+        <p id="display"></p>
+        <p id="wrongms"></p>
+        <div class="col-md-3">
+            <img src="images/shoes.jpg" class="shoes" alt="shoes">
+            <div class="item" id="productinfo">
+            <p class="items" id="item-name">Shoes for men</p>
+            <p class="items"  id="item-price">Price:Rs 800</p>
+            <p class="items">Discount:50% off</p>
+            <label for="phone">
+                Phone: 
+                <input type="text" name="phone" id="phone" />
+            </label>
+            <button id="btn" type="button" class="btn btn-primary" onclick="order()">Order</button>
+            </div>
+        </div>
+    </div> 
+
+    <script>
+            let counter = 0
+
+        function order(){
+            let itemName = document.getElementById("item-name").textContent
+            let itemPrice = document.getElementById("item-price").textContent
+            let phone = document.getElementById("phone").value
+
+            let data = {
+                itemName,
+                itemPrice,
+                phone
+            }
+
+
+            fetch('https://us-central1-cdap-jan-2021.cloudfunctions.net/sagar-order',{
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then((res) => document.getElementById('display').innerHTML = 'success')
+            .catch((err) => {
+                if(counter <= 4 ){
+                    counter++
+                    console.log("Retrying " + counter)
+                    setTimeout(order, 3000)
+                }else{
+                    document.getElementById('wrongms').innerHTML='server is down. try again later..'
+                }
+            })
+
+        }
+    </script>
+</body>
+</html>
